@@ -8,7 +8,7 @@ services:
     volumes:
       - ./html:/var/www/html
     environment:
-#      WEB_DOCUMENT_ROOT:
+      WEB_DOCUMENT_ROOT: /var/www/html/app/web
   database:
     container_name: rasenko_backend_base
     image: orchardup/postgresql
