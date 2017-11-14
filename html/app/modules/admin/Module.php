@@ -11,7 +11,8 @@ use yii\web\ForbiddenHttpException;
  */
 class Module extends \yii\base\Module
 {
-    public $app;
+    public $layoutPath = '@app/modules/admin/views/layouts';
+    public $layout = 'main';
     /**
      * @inheritdoc
      */
