@@ -1,0 +1,22 @@
+version: "3"
+services:
+  webserver:
+    build: .
+    container_name: rasenko_backend_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/var/www/html
+    environment:
+#      WEB_DOCUMENT_ROOT:
+  database:
+    container_name: rasenko_backend_base
+    image: orchardup/postgresql
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRESQL_DB=main_base
+      - POSTGRESQL_USER=root
+      - POSTGRESQL_PASS=root
+    volumes:
+      - /var/lib/postgresql/data
