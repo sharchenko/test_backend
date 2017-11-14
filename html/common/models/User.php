@@ -19,12 +19,18 @@ use yii\web\IdentityInterface;
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
+ * @property string $role
  * @property string $password write-only password
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+    const ROLE_USER = 'user';
+    const ROLE_ADMIN = 'admin';
+
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
+
+    const SCENARIO_CONSOLE = 'console';
 
 
     /**
@@ -51,6 +57,8 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            ['role', 'in', 'range' => [self::ROLE_USER], 'on' => self::SCENARIO_DEFAULT],
+            ['role', 'in', 'range' => [self::ROLE_USER, self::ROLE_ADMIN], 'on' => self::SCENARIO_CONSOLE],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
         ];
