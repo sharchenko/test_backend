@@ -22,9 +22,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'tableOptions' => [
-            'class' => 'table table-bordered table-responsive table-hover'
-        ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -38,8 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
 
             [
-                'contentOptions' => ['class' => 'text-right'],
-                'class' => 'yii\grid\ActionColumn'
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{update} {delete}'
             ],
         ],
     ]); ?>

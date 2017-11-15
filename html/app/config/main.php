@@ -18,6 +18,10 @@ return [
         ],
     ],
     'components' => [
+        'formatter' => [
+            'currencyCode' => 'UAH',
+            'timeZone' => 'Europe/Kiev'
+        ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],

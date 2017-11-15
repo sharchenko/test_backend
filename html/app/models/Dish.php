@@ -47,7 +47,7 @@ class Dish extends \yii\db\ActiveRecord
         return [
             [['name', 'price', 'category_id'], 'required'],
             [['description'], 'string'],
-            [['price'], 'number'],
+            [['price'], 'number', 'min' => 1],
             [['category_id', 'created_at', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
@@ -61,12 +61,12 @@ class Dish extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'description' => 'Description',
-            'price' => 'Price',
-            'category_id' => 'Category ID',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'name' => 'Наименование',
+            'description' => 'Описание',
+            'price' => 'Цена',
+            'category_id' => 'Категория',
+            'created_at' => 'Создано',
+            'updated_at' => 'Обновлено',
         ];
     }
 

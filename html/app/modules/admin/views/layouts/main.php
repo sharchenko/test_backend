@@ -1,8 +1,10 @@
 <?php
 
 /* @var $this \yii\web\View */
+
 /* @var $content string */
 
+use app\models\Category;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -36,14 +38,14 @@ AppAsset::register($this);
         ],
     ]);
 
-        $menuItems[] = '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                'Выход (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>';
+    $menuItems[] = '<li>'
+        . Html::beginForm(['/site/logout'], 'post')
+        . Html::submitButton(
+            'Выход (' . Yii::$app->user->identity->username . ')',
+            ['class' => 'btn btn-link logout']
+        )
+        . Html::endForm()
+        . '</li>';
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => $menuItems,
@@ -51,9 +53,33 @@ AppAsset::register($this);
     NavBar::end();
     ?>
     <div class="container-fluid">
+        <?php
+        NavBar::begin(['brandLabel' => false]);
+        $dishes = [
+            'label' => 'Блюда',
+            'items' => []
+        ];
+        foreach (Category::find()->all() as $category) {
+            $dishes['items'][] = [
+                'label' => $category->name,
+                'url' => ['/admin/dish', 'category' => $category->id]
+            ];
+        }
+        ?>
+        <?= Nav::widget([
+            'options' => ['class' => 'navbar-nav'],
+            'items' => [
+                [
+                    'label' => 'Категории меню',
+                    'url' => '/admin/category'
+                ],
+                $dishes
+            ]
+        ]) ?>
+        <?php NavBar::end(); ?>
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-            'homeLink' => ['url' => '/admin', 'label' => 'Панель ']
+            'homeLink' => ['url' => '/admin', 'label' => 'Панель управления']
         ]) ?>
         <?= Alert::widget() ?>
         <?= $content ?>

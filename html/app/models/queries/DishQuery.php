@@ -2,6 +2,8 @@
 
 namespace app\models\queries;
 
+use app\models\Category;
+
 /**
  * This is the ActiveQuery class for [[\app\models\Dish]].
  *
@@ -9,10 +11,10 @@ namespace app\models\queries;
  */
 class DishQuery extends \yii\db\ActiveQuery
 {
-    /*public function active()
+    public function byCategory($category)
     {
-        return $this->andWhere('[[status]]=1');
-    }*/
+        return $this->andWhere(['category_id' => $category instanceof Category ? $category->id : $category]);
+    }
 
     /**
      * @inheritdoc
