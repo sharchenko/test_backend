@@ -16,7 +16,7 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $created_at
  * @property integer $updated_at
  *
- * @property User $createdBy
+ * @property User $sender
  * @property OrderDishes[] $orderDishes
  */
 class Order extends \yii\db\ActiveRecord
@@ -85,7 +85,7 @@ class Order extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
+    public function getSender()
     {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
     }

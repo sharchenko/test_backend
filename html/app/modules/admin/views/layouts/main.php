@@ -73,7 +73,11 @@ AppAsset::register($this);
                     'label' => 'Категории меню',
                     'url' => '/admin/category'
                 ],
-                $dishes
+                $dishes,
+                [
+                    'label' => 'Заказы',
+                    'url' => '/admin/order'
+                ]
             ]
         ]) ?>
         <?php NavBar::end(); ?>
