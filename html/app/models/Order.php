@@ -2,23 +2,24 @@
 
 namespace app\models;
 
+use common\models\User;
 use Yii;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "order".
  *
  * @property integer $id
- * @property integer $order_id
- * @property integer $user_id
- * @property integer $dish_id
- * @property integer $count
- * @property integer $created_at
+ * @property string $status
+ * @property integer $created_by
  *
- * @property Dish $dish
- * @property User $user
+ * @property User $createdBy
+ * @property OrderDishes[] $orderDishes
  */
 class Order extends \yii\db\ActiveRecord
 {
+    const STATUS_DRAFT = 'draft';
+    const STATUS_SENT = 'sent';
     /**
      * @inheritdoc
      */
@@ -27,16 +28,27 @@ class Order extends \yii\db\ActiveRecord
         return 'order';
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'created_by',
+                'updatedByAttribute' => null
+            ]
+        ];
+    }
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['order_id', 'user_id', 'dish_id', 'count', 'created_at'], 'required'],
-            [['order_id', 'user_id', 'dish_id', 'count', 'created_at'], 'integer'],
-            [['dish_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dish::className(), 'targetAttribute' => ['dish_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['status'], 'required'],
+            [['created_by'], 'integer'],
+            [['status'], 'string', 'max' => 255],
+            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
         ];
     }
 
@@ -47,28 +59,25 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'order_id' => 'Order ID',
-            'user_id' => 'User ID',
-            'dish_id' => 'Dish ID',
-            'count' => 'Count',
-            'created_at' => 'Created At',
+            'status' => 'Status ID',
+            'created_by' => 'Created By',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDish()
+    public function getCreatedBy()
     {
-        return $this->hasOne(Dish::className(), ['id' => 'dish_id']);
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUser()
+    public function getOrderDishes()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return $this->hasMany(OrderDishes::className(), ['order_id' => 'id']);
     }
 
     /**

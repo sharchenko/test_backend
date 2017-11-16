@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models\queries;
+use app\models\Order;
 
 /**
  * This is the ActiveQuery class for [[\app\models\Order]].
@@ -9,10 +10,17 @@ namespace app\models\queries;
  */
 class OrderQuery extends \yii\db\ActiveQuery
 {
-    /*public function active()
+    /**
+     * @param $id
+     * @return Order|null
+     */
+    public function currentDraft($id)
     {
-        return $this->andWhere('[[status]]=1');
-    }*/
+        return $this
+            ->andWhere(['created_by' => $id])
+            ->andWhere(['status' => Order::STATUS_DRAFT])
+            ->one();
+    }
 
     /**
      * @inheritdoc

@@ -14,15 +14,20 @@ class m171114_210409_order extends Migration
     {
         $this->createTable('order', [
             'id' => $this->primaryKey(),
+            'status' => $this->string()->notNull()
+        ]);
+
+        $this->createTable('order_dishes', [
+            'id' => $this->primaryKey(),
             'order_id' => $this->integer()->notNull(),
             'user_id' => $this->integer()->notNull(),
             'dish_id' => $this->integer()->notNull(),
             'count' => $this->integer()->notNull(),
-            'created_at' => $this->integer()->notNull(),
         ]);
 
-        $this->addForeignKey('order_user_fk', 'order', 'user_id', 'user', 'id', 'cascade');
-        $this->addForeignKey('order_dish_fk', 'order', 'dish_id', 'dish', 'id', 'cascade');
+        $this->addForeignKey('order_fk', 'order_dishes', 'order_id', 'order', 'id', 'cascade');
+        $this->addForeignKey('order_user_fk', 'order_dishes', 'user_id', 'user', 'id', 'cascade');
+        $this->addForeignKey('order_dish_fk', 'order_dishes', 'dish_id', 'dish', 'id', 'cascade');
     }
 
     /**
@@ -31,5 +36,6 @@ class m171114_210409_order extends Migration
     public function safeDown()
     {
         $this->dropTable('order');
+        $this->dropTable('order_dishes');
     }
 }

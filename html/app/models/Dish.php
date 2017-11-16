@@ -17,7 +17,6 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $updated_at
  *
  * @property Category $category
- * @property Order[] $orders
  */
 class Dish extends \yii\db\ActiveRecord
 {
@@ -76,14 +75,6 @@ class Dish extends \yii\db\ActiveRecord
     public function getCategory()
     {
         return $this->hasOne(Category::className(), ['id' => 'category_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getOrders()
-    {
-        return $this->hasMany(Order::className(), ['dish_id' => 'id']);
     }
 
     /**
