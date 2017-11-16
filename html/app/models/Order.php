@@ -77,7 +77,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public function getOrderDishes()
     {
-        return $this->hasMany(OrderDishes::className(), ['order_id' => 'id']);
+        return $this->hasMany(OrderDishes::className(), ['order_id' => 'id'])->orderBy('id');
     }
 
     /**

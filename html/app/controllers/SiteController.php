@@ -1,8 +1,11 @@
 <?php
+
 namespace app\controllers;
 
+use app\models\Category;
 use Yii;
 use yii\base\InvalidParamException;
+use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -11,7 +14,6 @@ use common\models\LoginForm;
 use app\models\PasswordResetRequestForm;
 use app\models\ResetPasswordForm;
 use app\models\SignupForm;
-use app\models\ContactForm;
 
 /**
  * Site controller
@@ -72,7 +74,19 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $models = Category::find()
+            ->joinWith('dishes')
+            ->all();
+        $inOrder = [];
+
+        if (!Yii::$app->user->isGuest) {
+            $inOrder = ArrayHelper::getColumn(Yii::$app->basket->order->orderDishes, 'id');
+        }
+
+        return $this->render('index', [
+            'models' => $models,
+            'inOrder' => $inOrder
+        ]);
     }
 
     /**
@@ -106,39 +120,6 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return mixed
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
-                Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
-            } else {
-                Yii::$app->session->setFlash('error', 'There was an error sending your message.');
-            }
-
-            return $this->refresh();
-        } else {
-            return $this->render('contact', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return mixed
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
     }
 
     /**

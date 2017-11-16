@@ -1,4 +1,7 @@
 <?php
+
+use app\components\basket\BasketComponent;
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -18,8 +21,11 @@ return [
         ],
     ],
     'components' => [
+        'basket' => [
+            'class' => BasketComponent::className()
+        ],
         'formatter' => [
-            'currencyCode' => 'UAH',
+            'currencyCode' => 'USD',
             'timeZone' => 'Europe/Kiev'
         ],
         'request' => [

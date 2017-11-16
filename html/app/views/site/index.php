@@ -1,53 +1,52 @@
 <?php
 
+use app\models\Category;
+use yii\helpers\Html;
+
 /* @var $this yii\web\View */
+/* @var $models Category[] */
+/* @var $inOrder array */
 
-$this->title = 'My Yii Application';
 ?>
-<div class="site-index">
-
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
+<div class="panel">
+    <div class="panel-heading">
+        <div class="panel-title"><h2>Меню</h2></div>
+        <?php if (Yii::$app->user->isGuest): ?>
+            <div>
+                <small>Войдите чтобы сделать заказ</small>
+            </div>
+        <?php endif; ?>
     </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
+    <div class="panel-body">
+        <?php foreach ($models as $category): ?>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3><?= Html::encode($category->name) ?></h3>
+                </div>
+                <div class="col-md-11 col-md-offset-1">
+                    <table class="table table-responsive">
+                        <?php foreach ($category->dishes as $dish): ?>
+                            <tr>
+                                <td>
+                                    <?= Html::encode($dish->name) ?>
+                                    <div>
+                                        <small>
+                                            <?= Html::encode($dish->description) ?>
+                                        </small>
+                                    </div>
+                                </td>
+                                <td><?= Yii::$app->formatter->asCurrency($dish->price) ?></td>
+                                <td>
+                                    <?php if (!Yii::$app->user->isGuest && !in_array($dish->id, $inOrder)): ?>
+                                        <button class="btn btn-sm btn-primary" data-action="append" data-id="<?= $dish->id ?>">Добавить
+                                        </button>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
+                </div>
             </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
-        </div>
-
+        <?php endforeach; ?>
     </div>
 </div>

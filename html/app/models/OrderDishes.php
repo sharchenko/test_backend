@@ -43,13 +43,6 @@ class OrderDishes extends \yii\db\ActiveRecord
         ];
     }
 
-    public function behaviors()
-    {
-        return [
-            TimestampBehavior::className()
-        ];
-    }
-
     /**
      * @inheritdoc
      */

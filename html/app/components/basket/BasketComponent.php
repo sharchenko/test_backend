@@ -16,6 +16,7 @@ use yii\helpers\Json;
  * @package app\components\basket
  *
  * @property Order $order
+ * @property integer $orderCount
  */
 class BasketComponent extends Component
 {
@@ -40,7 +41,11 @@ class BasketComponent extends Component
         return $this->_order;
     }
 
-    public function append(Dish $dish, $count = 1, User $user = null)
+    public function getOrderCount() {
+        return $this->order->getOrderDishes()->count();
+    }
+
+    public function append(Dish $dish, User $user = null)
     {
         if (!$user) $user = \Yii::$app->user->identity;
 
@@ -54,7 +59,7 @@ class BasketComponent extends Component
             'order_id' => $this->order->id,
             'user_id' => $user->id,
             'dish_id' => $dish->id,
-            'count' => $count
+            'count' => 1
         ]);
 
         return $orderDish->save();
@@ -63,6 +68,12 @@ class BasketComponent extends Component
     public function remove(Dish $dish, User $user = null)
     {
         if (!$user) $user = \Yii::$app->user->identity;
+
+        \Yii::warning([
+            'order_id' => $this->order->id,
+            'user_id' => $user->id,
+            'dish_id' => $dish->id,
+        ]);
 
         if ($orderDish = OrderDishes::findOne([
             'order_id' => $this->order->id,
