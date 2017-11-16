@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use robregonm\pdf\PdfResponseFormatter;
 use Yii;
 use app\models\Category;
 use app\modules\admin\models\CategorySearch;
@@ -108,5 +109,16 @@ class CategoryController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionPdf()
+    {
+        Yii::$app->response->format = 'pdf';
+
+        return $this->renderPartial('pdf', [
+            'models' => Category::find()
+                ->with('dishes')
+                ->all()
+        ]);
     }
 }
