@@ -50,5 +50,9 @@ use yii\web\View;
             <h4>Вы еще ничего не заказали, перейдите в <a href="/">меню</a>, чтобы сделать заказ.</h4>
         <?php endif; ?>
     </div>
+    <div class="panel-footer">
+        <a href="/order/send" class="clearfix">
+            <button class="btn btn-primary pull-right">Отправить заказ</button>
+        </a>
+    </div>
 </div>
-

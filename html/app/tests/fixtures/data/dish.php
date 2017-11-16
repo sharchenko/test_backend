@@ -12,7 +12,7 @@ foreach (Category::find()->all() as $category) {
         $data[] = [
             'name' => $faker->sentence(3),
             'description' => $faker->text(),
-            'price' => $faker->numberBetween(100, 500),
+            'price' => $faker->numberBetween(10, 1000),
             'category_id' => $category->id,
             'created_at' => time(),
             'updated_at' => time(),

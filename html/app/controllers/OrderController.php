@@ -6,6 +6,7 @@ namespace app\controllers;
 
 use app\components\basket\BasketComponent;
 use app\models\Dish;
+use app\models\Order;
 use app\models\OrderDishes;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -97,6 +98,21 @@ class OrderController extends Controller
             ];
         }
         throw new ServerErrorHttpException();
+    }
+
+    public function actionSend()
+    {
+        $order = Order::find()->currentDraft(\Yii::$app->user->id);
+        if ($order) {
+            if ($order->orderDishes && $order->send()) {
+                \Yii::$app->session->setFlash('success', 'Ваш заказ принят, ожидайте.');
+                return $this->redirect('/');
+            }
+            \Yii::$app->session->setFlash('warning', 'Ваш заказ пуст, выберите блюда из меню.');
+            return $this->redirect('/');
+        }
+        \Yii::$app->session->setFlash('warning', 'Возникла непредвиденная ошибка, простите за неудобства');
+        return $this->redirect('/');
     }
 
     /**

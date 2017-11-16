@@ -5,6 +5,7 @@ namespace app\models;
 use common\models\User;
 use Yii;
 use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "order".
@@ -12,6 +13,8 @@ use yii\behaviors\BlameableBehavior;
  * @property integer $id
  * @property string $status
  * @property integer $created_by
+ * @property integer $created_at
+ * @property integer $updated_at
  *
  * @property User $createdBy
  * @property OrderDishes[] $orderDishes
@@ -20,6 +23,7 @@ class Order extends \yii\db\ActiveRecord
 {
     const STATUS_DRAFT = 'draft';
     const STATUS_SENT = 'sent';
+
     /**
      * @inheritdoc
      */
@@ -31,6 +35,7 @@ class Order extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
+            TimestampBehavior::className(),
             [
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'created_by',
@@ -46,10 +51,23 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             [['status'], 'required'],
-            [['created_by'], 'integer'],
+            [['created_by', 'created_at', 'updated_at'], 'integer'],
             [['status'], 'string', 'max' => 255],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
         ];
+    }
+
+    public function afterSave($insert, $changedAttributes){
+        parent::afterSave($insert, $changedAttributes);
+
+        $modelWasSent = $this->status === self::STATUS_SENT && $changedAttributes['status'] === self::STATUS_DRAFT;
+
+        if ($modelWasSent) OrderHistory::write($this);
+    }
+
+    public function send() {
+        $this->status = self::STATUS_SENT;
+        return $this->save();
     }
 
     /**

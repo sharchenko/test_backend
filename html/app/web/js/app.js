@@ -1,7 +1,7 @@
 var app =
 webpackJsonpapp([1],{
 
-/***/ 31:
+/***/ 29:
 /***/ (function(module, exports) {
 
 /* global $, axios */
@@ -81,7 +81,7 @@ $('*[data-action="changeCount"]').click(function () {
 
 __webpack_require__(9);
 
-__webpack_require__(31);
+__webpack_require__(29);
 
 /***/ }),
 

@@ -6,6 +6,7 @@ use app\models\Category;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -74,13 +75,14 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+
         $models = Category::find()
             ->joinWith('dishes')
             ->all();
         $inOrder = [];
 
         if (!Yii::$app->user->isGuest) {
-            $inOrder = ArrayHelper::getColumn(Yii::$app->basket->order->orderDishes, 'id');
+            $inOrder = ArrayHelper::getColumn(Yii::$app->basket->order->orderDishes, 'dish_id');
         }
 
         return $this->render('index', [

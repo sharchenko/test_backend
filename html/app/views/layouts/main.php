@@ -4,6 +4,7 @@
 
 /* @var $content string */
 
+use common\models\User;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -33,7 +34,7 @@ AppAsset::register($this);
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar-inverse',
+            'class' => 'navbar navbar-inverse',
         ],
     ]);
     $menuItems = [
@@ -48,12 +49,19 @@ AppAsset::register($this);
             'label' => 'Заказ ' . Html::tag('span', $orderCount, [
                     'class' => 'label ' . (!$orderCount ? 'label-warning' : 'label-success'),
                 ]),
-            'url' => '/order/view', //TODO order/view
+            'url' => '/order/view',
             'encode' => false,
             'options' => [
                 'id' => 'order-indicator'
             ]
         ];
+
+        if (Yii::$app->user->identity->role === User::ROLE_ADMIN) {
+            $menuItems[] = [
+                'label' => 'Админпанель',
+                'url' => '/admin',
+            ];
+        }
 
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
