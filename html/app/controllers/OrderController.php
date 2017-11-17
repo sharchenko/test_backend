@@ -46,7 +46,7 @@ class OrderController extends Controller
         \Yii::$app->response->format = Response::FORMAT_HTML;
 
         $models = $this->basket->order->getOrderDishes()
-            ->joinWith('dish')
+            ->with('dish')
             ->all();
 
         return $this->render('view', [

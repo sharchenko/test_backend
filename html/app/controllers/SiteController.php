@@ -77,7 +77,7 @@ class SiteController extends Controller
     {
 
         $models = Category::find()
-            ->joinWith('dishes')
+            ->with('dishes')
             ->all();
         $inOrder = [];
 

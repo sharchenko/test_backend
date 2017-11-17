@@ -47,7 +47,8 @@ use yii\web\View;
                         if ($helper->inGroup($group, Yii::$app->user->identity)) {
                             if ($helper->isAdmin($group, Yii::$app->user->identity)) {
                                 $buttons[] = Html::a('Просмотр', ['view', 'id' => $group->id], ['class' => 'btn btn-xs btn-info']);
-                                $buttons[] = Html::a('Управление', ['edit', 'id' => $group->id], ['class' => 'btn btn-xs btn-success']);
+                                $buttons[] = Html::a('Управление ' . ($group->groupUsersPending ? Html::tag('span', '+ ' . count($group->groupUsersPending), ['class' => 'label label-default']) : ''),
+                                    ['edit', 'id' => $group->id], ['class' => 'btn btn-xs btn-success']);
                                 $buttons[] = Html::a('Удалить', ['delete', 'id' => $group->id], ['class' => 'btn btn-xs btn-danger', 'data' => [
                                     'confirm' => 'Вы действительно хотите удалить группу?',
                                     'method' => 'post',

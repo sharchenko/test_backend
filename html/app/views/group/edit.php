@@ -53,10 +53,10 @@ use yii\web\View;
                     'content' => function (GroupUser $groupUser) {
                         return $groupUser->status === GroupUser::STATUS_PENDING ?
                             Html::tag('span', 'Отправил запрос', [
-                                'class' => 'label label-success'
+                                'class' => 'label label-default'
                             ]) :
                             Html::tag('span', 'В группе', [
-                                'class' => 'label label-default'
+                                'class' => 'label label-success'
                             ]);
                     }
                 ],
@@ -66,11 +66,16 @@ use yii\web\View;
 
                         if ($groupUser->status === GroupUser::STATUS_PENDING) {
                             $buttons[] = Html::a('Подтвердить', ['approve', 'group_id' => $group->id, 'user_id' => $groupUser->user_id], ['class' => 'btn btn-xs btn-info']);
+                            $buttons[] = Html::a('Отклонить', ['execute', 'group_id' => $group->id, 'user_id' => $groupUser->user_id], ['class' => 'btn btn-xs btn-warning', 'data' => [
+                                'confirm' => "Вы действительно хотите отклонить пользователя {$groupUser->user->username}?",
+                                'method' => 'post',
+                            ]]);
+                        } else {
+                            $buttons[] = Html::a('Исключить', ['execute', 'group_id' => $group->id, 'user_id' => $groupUser->user_id], ['class' => 'btn btn-xs btn-danger', 'data' => [
+                                'confirm' => "Вы действительно хотите исключить пользователя {$groupUser->user->username} из группы?",
+                                'method' => 'post',
+                            ]]);
                         }
-                        $buttons[] = Html::a('Исключить', ['execute', 'group_id' => $group->id, 'user_id' => $groupUser->user_id], ['class' => 'btn btn-xs btn-danger', 'data' => [
-                            'confirm' => "Вы действительно хотите исключить пользователя {$groupUser->user->username} из группы?",
-                            'method' => 'post',
-                        ]]);
 
                         return implode(' ', $buttons);
                     }

@@ -44,7 +44,8 @@ class GroupController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Group::find()
-                ->joinWith(['groupUsersApproved'])
+                ->with('groupUsersApproved')
+                ->with('groupUsersPending')
                 ->orderBy('id DESC'),
         ]);
 
