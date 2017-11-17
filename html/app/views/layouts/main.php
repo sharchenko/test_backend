@@ -38,7 +38,7 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [
-        ['label' => 'Главная', 'url' => ['/site/index']],
+        ['label' => 'Главная', 'url' => ['/']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Регистрация', 'url' => ['/site/signup']];
@@ -54,6 +54,10 @@ AppAsset::register($this);
             'options' => [
                 'id' => 'order-indicator'
             ]
+        ];
+        $menuItems[] = [
+            'label' => 'Группы',
+            'url' => '/group'
         ];
 
         if (Yii::$app->user->identity->role === User::ROLE_ADMIN) {

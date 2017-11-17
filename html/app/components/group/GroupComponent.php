@@ -6,18 +6,23 @@ namespace app\components\group;
 
 use app\models\Group;
 use app\models\GroupUser;
+use common\models\User;
 use yii\base\Component;
+use yii\helpers\ArrayHelper;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 class GroupComponent extends Component
 {
     /**
+     * @param $name
      * @return Group
      */
-    public function create()
+    public function create($name)
     {
-        $group = new Group();
+        $group = new Group([
+            'name' => $name
+        ]);
         $group->save();
         return $group;
     }
@@ -52,7 +57,7 @@ class GroupComponent extends Component
     /**
      * @param $group_id
      * @param $user_id
-     * @return GroupUser
+     * @return boolean
      * @throws ForbiddenHttpException
      * @throws NotFoundHttpException
      */
@@ -67,7 +72,7 @@ class GroupComponent extends Component
             ]);
             if (!$groupUser) throw new NotFoundHttpException();
             $groupUser->status = GroupUser::STATUS_APPROVED;
-            return $groupUser;
+            return $groupUser->save();
         } else {
             throw new ForbiddenHttpException();
         }
@@ -83,8 +88,9 @@ class GroupComponent extends Component
     public function removeUser($group_id, $user_id)
     {
         $group = $this->findGroup($group_id);
+        $notAdmin = $group->admin->id !== $user_id;
 
-        if ($group->admin->id === \Yii::$app->user->id) {
+        if ($notAdmin) {
             $groupUser = GroupUser::findOne([
                 'group_id' => $group_id,
                 'user_id' => $user_id,
@@ -106,5 +112,25 @@ class GroupComponent extends Component
         $group = Group::findOne($id);
         if (!$group) throw new NotFoundHttpException();
         return $group;
+    }
+
+    public function inGroup(Group $group, User $user)
+    {
+        return in_array($user->id, ArrayHelper::getColumn($group->groupUsers, 'user_id'));
+    }
+
+    public function isAdmin(Group $group, User $user)
+    {
+        return $group->created_by === $user->id;
+    }
+
+    public function hasAccess(Group $group, User $user)
+    {
+        return in_array($user->id, ArrayHelper::getColumn($group->groupUsersApproved, 'user_id'));
+    }
+
+    public function canEditOrError(Group $group, User $user)
+    {
+        if (!$this->isAdmin($group, $user)) throw new ForbiddenHttpException();
     }
 }

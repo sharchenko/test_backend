@@ -15,7 +15,7 @@ use yii\web\View;
     </div>
     <div class="panel-body">
         <?php if (count($models)): ?>
-            <table class="table table-responsive">
+            <table class="table table-responsive table-condensed">
                 <?php foreach ($models as $dish): ?>
                     <tr>
                         <td>
@@ -32,7 +32,8 @@ use yii\web\View;
                                 <button class="btn" data-action="changeCount" data-type="decrement"
                                         data-id="<?= $dish->dish->id ?>">-
                                 </button>
-                                <button class="btn btn-primary"><strong class="count"><?= $dish->count ?></strong></button>
+                                <button class="btn btn-primary"><strong class="count"><?= $dish->count ?></strong>
+                                </button>
                                 <button class="btn" data-action="changeCount" data-type="increment"
                                         data-id="<?= $dish->dish->id ?>">+
                                 </button>
@@ -46,13 +47,12 @@ use yii\web\View;
                     </tr>
                 <?php endforeach; ?>
             </table>
+            <a href="/order/send" class="clearfix">
+                <button class="btn btn-primary pull-right">Отправить заказ</button>
+            </a>
         <?php else: ?>
             <h4>Вы еще ничего не заказали, перейдите в <a href="/">меню</a>, чтобы сделать заказ.</h4>
         <?php endif; ?>
     </div>
-    <div class="panel-footer">
-        <a href="/order/send" class="clearfix">
-            <button class="btn btn-primary pull-right">Отправить заказ</button>
-        </a>
-    </div>
+    <div class="panel-footer"></div>
 </div>

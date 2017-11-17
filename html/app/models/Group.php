@@ -17,10 +17,13 @@ Event::on(Group::className(), Group::EVENT_AFTER_INSERT, function(Event $event) 
  * This is the model class for table "group".
  *
  * @property integer $id
+ * @property string $name
  * @property integer $created_by
  *
  * @property User $admin
  * @property GroupUser[] $groupUsers
+ * @property GroupUser[] $groupUsersApproved
+ * @property GroupUser[] $groupUsersPending
  * @property User[] $users
  */
 class Group extends \yii\db\ActiveRecord
@@ -49,7 +52,8 @@ class Group extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['created_by'], 'required'],
+            ['name', 'string'],
+            [['name'], 'required'],
             [['created_by'], 'integer'],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
         ];
@@ -63,6 +67,7 @@ class Group extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'created_by' => 'Created By',
+            'name' => 'Название',
         ];
     }
 
@@ -80,6 +85,22 @@ class Group extends \yii\db\ActiveRecord
     public function getGroupUsers()
     {
         return $this->hasMany(GroupUser::className(), ['group_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGroupUsersApproved()
+    {
+        return $this->hasMany(GroupUser::className(), ['group_id' => 'id'])->andWhere(['status' => GroupUser::STATUS_APPROVED]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGroupUsersPending()
+    {
+        return $this->hasMany(GroupUser::className(), ['group_id' => 'id'])->andWhere(['status' => GroupUser::STATUS_PENDING]);
     }
 
     /**

@@ -48,7 +48,8 @@ class GroupUser extends \yii\db\ActiveRecord
     {
         return [
             [['group_id', 'user_id', 'status'], 'required'],
-            [['group_id', 'user_id', 'status'], 'integer'],
+            [['group_id', 'user_id'], 'integer'],
+            ['status', 'string'],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['group_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];

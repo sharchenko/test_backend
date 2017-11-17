@@ -21,7 +21,7 @@ class m171117_092132_group extends Migration
         $this->createTable('group_user', [
             'group_id' => $this->integer()->notNull(),
             'user_id' => $this->integer()->notNull(),
-            'status' => $this->integer()->notNull(),
+            'status' => $this->string()->notNull(),
         ]);
 
         $this->addPrimaryKey('group_user_pk', 'group_user', ['group_id', 'user_id']);
