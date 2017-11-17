@@ -1,6 +1,7 @@
 <?php
 
 use app\components\basket\BasketComponent;
+use app\components\group\GroupComponent;
 use robregonm\pdf\PdfResponseFormatter;
 
 $params = array_merge(
@@ -47,6 +48,9 @@ return [
         ],
         'basket' => [
             'class' => BasketComponent::className()
+        ],
+        'group' => [
+            'class' => GroupComponent::className()
         ],
         'formatter' => [
             'currencyCode' => 'USD',

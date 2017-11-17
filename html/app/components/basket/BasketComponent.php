@@ -23,6 +23,9 @@ class BasketComponent extends Component
     /** @var  Order */
     private $_order;
 
+    /**
+     * @return Order|null
+     */
     public function getOrder()
     {
         if (!isset($this->_order)) {
@@ -41,10 +44,18 @@ class BasketComponent extends Component
         return $this->_order;
     }
 
+    /**
+     * @return int|string
+     */
     public function getOrderCount() {
         return $this->order->getOrderDishes()->count();
     }
 
+    /**
+     * @param Dish $dish
+     * @param User|null $user
+     * @return bool
+     */
     public function append(Dish $dish, User $user = null)
     {
         if (!$user) $user = \Yii::$app->user->identity;
@@ -65,6 +76,11 @@ class BasketComponent extends Component
         return $orderDish->save();
     }
 
+    /**
+     * @param Dish $dish
+     * @param User|null $user
+     * @return bool
+     */
     public function remove(Dish $dish, User $user = null)
     {
         if (!$user) $user = \Yii::$app->user->identity;
@@ -85,6 +101,12 @@ class BasketComponent extends Component
         return false;
     }
 
+    /**
+     * @param Dish $dish
+     * @param $count
+     * @param User|null $user
+     * @return bool
+     */
     public function setCount(Dish $dish, $count, User $user = null)
     {
         if (!$user) $user = \Yii::$app->user->identity;
