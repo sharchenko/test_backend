@@ -25,11 +25,14 @@ var _vue = _interopRequireDefault(__webpack_require__(32));
 
 var _groupOrder = _interopRequireDefault(__webpack_require__(35));
 
+var _connection = __webpack_require__(44);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 __webpack_require__(1);
 
 _vue.default.prototype.$http = window.axios;
+_vue.default.prototype.$conn = _connection.connection;
 new _vue.default({
   el: '#group-order-root',
   components: {
@@ -132,7 +135,7 @@ exports = module.exports = __webpack_require__(38)(undefined);
 
 
 // module
-exports.push([module.i, "\n.group-order {\n  background-color: black;\n}\n", ""]);
+exports.push([module.i, "", ""]);
 
 // exports
 
@@ -177,6 +180,41 @@ if (false) {
     require("vue-hot-reload-api")      .rerender("data-v-58ff9dc2", esExports)
   }
 }
+
+/***/ }),
+
+/***/ 44:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.connection = void 0;
+var url = "ws://".concat(location.hostname, ":8081");
+var connection = new WebSocket(url);
+exports.connection = connection;
+
+connection.message = function (message) {
+  return connection.send(JSON.stringify(message));
+};
+
+connection.onopen = function (event) {
+  console.log("Connected to ".concat(url));
+  axios.get('/user/auth-key').then(function (res) {
+    if (res.data.key) {
+      connection.message({
+        auth: res.data.key
+      });
+    }
+  });
+};
+
+connection.onmessage = function (event) {
+  console.log(event.data);
+};
 
 /***/ })
 
