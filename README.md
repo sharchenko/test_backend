@@ -12,6 +12,8 @@
 
 `php yii fixture "*"`
 
+`php yii server` веб сокет на localhost:8081
+
 доступно на localhost:8080
 
 Учетка админа TestUser0 123456
