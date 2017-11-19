@@ -87,7 +87,11 @@ class GroupController extends Controller
 
     public function actionView($id)
     {
-        //TODO страница заказа для группы
+        $group = $this->helper->findGroup($id);
+
+        return $this->render('view', [
+            'group' => $group
+        ]);
     }
 
     /**

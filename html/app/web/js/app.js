@@ -1,7 +1,30 @@
 var app =
-webpackJsonpapp([1],{
+webpackJsonpapp([2],{
 
-/***/ 29:
+/***/ 1:
+/***/ (function(module, exports, __webpack_require__) {
+
+window.axios = __webpack_require__(4);
+var token = document.head.querySelector('meta[name="csrf-token"]');
+
+if (token) {
+  window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+} else {
+  console.error('CSRF token not found');
+}
+
+/***/ }),
+
+/***/ 11:
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(1);
+
+__webpack_require__(30);
+
+/***/ }),
+
+/***/ 30:
 /***/ (function(module, exports) {
 
 /* global $, axios */
@@ -74,29 +97,6 @@ $('*[data-action="changeCount"]').click(function () {
   });
 });
 
-/***/ }),
-
-/***/ 8:
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(9);
-
-__webpack_require__(29);
-
-/***/ }),
-
-/***/ 9:
-/***/ (function(module, exports, __webpack_require__) {
-
-window.axios = __webpack_require__(10);
-var token = document.head.querySelector('meta[name="csrf-token"]');
-
-if (token) {
-  window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-} else {
-  console.error('CSRF token not found');
-}
-
 /***/ })
 
-},[8]);
+},[11]);

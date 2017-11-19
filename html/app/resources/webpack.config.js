@@ -3,7 +3,8 @@ const webpack = require('webpack')
 
 module.exports = {
     entry: {
-        app: './js/app.js'
+        app: './js/app.js',
+        'group-order': './js/group-order/main.js',
     },
     output: {
         path: path.resolve(__dirname, '../web/js'),
@@ -12,6 +13,16 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.vue$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        scss: 'vue-style-loader!css-loader!sass-loader'
+                    }
+                }
+            },
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
