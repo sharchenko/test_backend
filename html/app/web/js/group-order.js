@@ -216,6 +216,8 @@ connection.onmessage = function (event) {
   console.log(event.data);
 };
 
+window.conn = connection;
+
 /***/ })
 
 },[31]);

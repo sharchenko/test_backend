@@ -17,4 +17,6 @@ connection.onmessage = function (event) {
     console.log(event.data)
 }
 
+window.conn = connection
+
 export {connection}
