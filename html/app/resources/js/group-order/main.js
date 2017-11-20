@@ -1,10 +1,13 @@
 require('../bootstrap')
-import Vue from 'vue/dist/vue.min'
+import Vue from 'vue/dist/vue'
 import GroupOrder from './group-order.vue'
-import {connection} from "./connection";
+import {Connection} from "./connection";
 
 Vue.prototype.$http = window.axios
-Vue.prototype.$conn = connection
+Vue.prototype.$conn = new Connection()
+Vue.prototype.$conn.on('message', function (event, data) {
+    console.log(data)
+})
 
 new Vue({
     el: '#group-order-root',

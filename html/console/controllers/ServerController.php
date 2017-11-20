@@ -4,6 +4,7 @@
 namespace console\controllers;
 
 
+use app\models\Category;
 use common\models\User;
 use consik\yii2websocket\events\WSClientErrorEvent;
 use consik\yii2websocket\events\WSClientEvent;
@@ -16,6 +17,8 @@ class ServerController extends Controller
 {
     public function actionIndex($port = 81)
     {
+        \Yii::setAlias('@app', dirname(dirname(__DIR__)) . '/app'); //TODO консольный контроллер переопределяет @app, на будущее исполльщовать другое пространство имен
+
         $server = new WebSocketServer();
         $server->port = $port;
 
@@ -43,7 +46,11 @@ class ServerController extends Controller
                 if (isset($message['auth'])) {
                     if ($user = User::findOne(['auth_key' => $message['auth']])) {
                         $event->client->send(Json::encode([
-                            'auth' => 'success'
+                            'auth' => 'success',
+                            'menu' => Category::find()
+                                ->with('dishes')
+                                ->asArray()
+                                ->all()
                         ]));
                         $storage->attach($event->client, $user);
                     } else {
