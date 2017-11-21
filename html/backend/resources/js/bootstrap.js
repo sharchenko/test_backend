@@ -1,4 +1,3 @@
-import 'bootstrap'
 window.axios = require('axios');
 
 let token = document.head.querySelector('meta[name="csrf-token"]');

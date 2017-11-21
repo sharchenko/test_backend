@@ -11,6 +11,7 @@ use console\daemons\WebSocketServer;
 use yii\console\Controller;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 class ServerController extends Controller
@@ -41,22 +42,25 @@ class ServerController extends Controller
                 throw new NotFoundHttpException('group_id not found');
             }
 
-            $group = $server->getGroup($group_id);
-            $user = $server->getUser([$event, $message, $group]);
-            echo 'message by ' . $user->username . PHP_EOL;
+            $room = $server->getGroup($group_id);
+            $user = $server->getUser([$event, $message, $room]);
+            echo 'request from ' . $user->username . PHP_EOL;
 
-            /**
-             * Данные которые должны присутствовать в запросе
-             * ID группы
-             * действите [получить список(меню), добавление, удаление, инкремент элементов]
-             * ID блюда для всех, кроме получения списка
-             *
-             * после действия нужно обновлять данные у всех пользователей включая инициатора действия
-             * хранилище должно иметь связь
-             *      группы => активные подключения => модели пользователей
-             *
-             * при этом при доступ к группе надо проверять каждый раз, т.к. пользователь может быть исключен во время просмотра страницы
-             */
+            if (!$server->helper->inGroup($room->model, $user)) {
+                $room->storage->detach($event->client);
+                throw new ForbiddenHttpException();
+            }
+
+            $action = ArrayHelper::getValue($message, 'action');
+
+            if ($action && method_exists($server, $action)) {
+                $server->$action($event->client, $user, ArrayHelper::getValue($message, 'params'));
+                $server->updateData($room);
+            } elseif ($action) {
+                $event->client->send(Json::encode([
+                    'error' => 'invalid action'
+                ]));
+            }
         });
 
         $server->start();
