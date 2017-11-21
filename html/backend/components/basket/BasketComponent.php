@@ -5,6 +5,7 @@ namespace backend\components\basket;
 
 
 use backend\models\Dish;
+use backend\models\Group;
 use backend\models\Order;
 use backend\models\OrderDishes;
 use common\models\User;
@@ -44,30 +45,48 @@ class BasketComponent extends Component
         return $this->_order;
     }
 
+    public function getGroupOrder(Group $group)
+    {
+        $order = Order::find()->currentGroupDraft($group->id);
+        if (!$order) {
+            $order = new Order([
+                'status' => Order::STATUS_DRAFT,
+                'group_id' => $group->id,
+                'created_by' => $group->created_by
+            ]);
+            if (!$order->save()) {
+                throw new \LogicException(Json::encode($order->errors));
+            }
+        }
+        return $order;
+    }
+
     /**
      * @return int|string
      */
-    public function getOrderCount() {
+    public function getOrderCount()
+    {
         return $this->order->getOrderDishes()->count();
     }
 
     /**
      * @param Dish $dish
      * @param User|null $user
+     * @param Order|null $order
      * @return bool
      */
-    public function append(Dish $dish, User $user = null)
+    public function append(Dish $dish, User $user = null, Order $order = null)
     {
         if (!$user) $user = \Yii::$app->user->identity;
 
         if (OrderDishes::findOne([
-            'order_id' => $this->order->id,
+            'order_id' => $order ? $order->id : $this->order->id,
             'user_id' => $user->id,
             'dish_id' => $dish->id,
         ])) return false;
 
         $orderDish = new OrderDishes([
-            'order_id' => $this->order->id,
+            'order_id' => $order ? $order->id : $this->order->id,
             'user_id' => $user->id,
             'dish_id' => $dish->id,
             'count' => 1
@@ -79,20 +98,15 @@ class BasketComponent extends Component
     /**
      * @param Dish $dish
      * @param User|null $user
+     * @param Order|null $order
      * @return bool
      */
-    public function remove(Dish $dish, User $user = null)
+    public function remove(Dish $dish, User $user = null, Order $order = null)
     {
         if (!$user) $user = \Yii::$app->user->identity;
 
-        \Yii::warning([
-            'order_id' => $this->order->id,
-            'user_id' => $user->id,
-            'dish_id' => $dish->id,
-        ]);
-
         if ($orderDish = OrderDishes::findOne([
-            'order_id' => $this->order->id,
+            'order_id' => $order ? $order->id : $this->order->id,
             'user_id' => $user->id,
             'dish_id' => $dish->id,
         ])) {
@@ -105,14 +119,15 @@ class BasketComponent extends Component
      * @param Dish $dish
      * @param $count
      * @param User|null $user
+     * @param Order|null $order
      * @return bool
      */
-    public function setCount(Dish $dish, $count, User $user = null)
+    public function setCount(Dish $dish, $count, User $user = null, Order $order = null)
     {
         if (!$user) $user = \Yii::$app->user->identity;
 
         if ($orderDish = OrderDishes::findOne([
-            'order_id' => $this->order->id,
+            'order_id' => $order ? $order->id : $this->order->id,
             'user_id' => $user->id,
             'dish_id' => $dish->id,
         ])) {

@@ -7,7 +7,7 @@ use backend\models\Order;
 /**
  * This is the ActiveQuery class for [[\app\models\Order]].
  *
- * @see \app\models\Order
+ * @see \backend\models\Order
  */
 class OrderQuery extends \yii\db\ActiveQuery
 {
@@ -24,8 +24,20 @@ class OrderQuery extends \yii\db\ActiveQuery
     }
 
     /**
+     * @param $id
+     * @return Order|null
+     */
+    public function currentGroupDraft($id)
+    {
+        return $this
+            ->andWhere(['group_id' => $id])
+            ->andWhere(['status' => Order::STATUS_DRAFT])
+            ->one();
+    }
+
+    /**
      * @inheritdoc
-     * @return \app\models\Order[]|array
+     * @return \backend\models\Order[]|array
      */
     public function all($db = null)
     {
@@ -34,7 +46,7 @@ class OrderQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \app\models\Order|array|null
+     * @return \backend\models\Order|array|null
      */
     public function one($db = null)
     {

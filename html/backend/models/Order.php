@@ -15,6 +15,7 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $created_by
  * @property integer $created_at
  * @property integer $updated_at
+ * @property integer $group_id
  *
  * @property User $sender
  * @property OrderDishes[] $orderDishes
@@ -51,7 +52,7 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             [['status'], 'required'],
-            [['created_by', 'created_at', 'updated_at'], 'integer'],
+            [['created_by', 'created_at', 'updated_at', 'group_id'], 'integer'],
             [['status'], 'string', 'max' => 255],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
         ];
@@ -100,7 +101,7 @@ class Order extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return \app\models\queries\OrderQuery the active query used by this AR class.
+     * @return \backend\models\queries\OrderQuery the active query used by this AR class.
      */
     public static function find()
     {
