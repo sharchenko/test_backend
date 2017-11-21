@@ -4,7 +4,7 @@
 namespace console\controllers;
 
 
-use app\models\Category;
+use backend\models\Category;
 use yii\console\Controller;
 
 class MenuController extends Controller

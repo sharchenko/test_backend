@@ -8,9 +8,9 @@ use yii\test\ActiveFixture;
 
 class GroupFixture extends ActiveFixture
 {
-    public $modelClass = 'app\models\Group';
+    public $modelClass = 'backend\models\Group';
 
     public $depends = [
-        'app\tests\fixtures\UserFixture'
+        'backend\tests\fixtures\UserFixture'
     ];
 }

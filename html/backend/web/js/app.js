@@ -7,8 +7,6 @@ webpackJsonpapp([2],{
 "use strict";
 
 
-__webpack_require__(25);
-
 window.axios = __webpack_require__(26);
 
 var token = document.head.querySelector('meta[name="csrf-token"]');

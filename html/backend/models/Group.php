@@ -117,6 +117,6 @@ class Group extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new \app\models\queries\GroupQuery(get_called_class());
+        return new \backend\models\queries\GroupQuery(get_called_class());
     }
 }

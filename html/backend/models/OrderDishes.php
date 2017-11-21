@@ -87,6 +87,6 @@ class OrderDishes extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new \app\models\queries\OrderDishesQuery(get_called_class());
+        return new \backend\models\queries\OrderDishesQuery(get_called_class());
     }
 }

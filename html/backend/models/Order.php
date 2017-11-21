@@ -104,6 +104,6 @@ class Order extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new \app\models\queries\OrderQuery(get_called_class());
+        return new \backend\models\queries\OrderQuery(get_called_class());
     }
 }

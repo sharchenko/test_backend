@@ -7,8 +7,6 @@ webpackJsonpapp([1],{
 "use strict";
 
 
-__webpack_require__(25);
-
 window.axios = __webpack_require__(26);
 
 var token = document.head.querySelector('meta[name="csrf-token"]');
@@ -44,6 +42,7 @@ __webpack_require__(15);
 
 _vue2.default.prototype.$http = window.axios;
 _vue2.default.prototype.$conn = new _connection.Connection();
+window.conn = _vue2.default.prototype.$conn;
 _vue2.default.prototype.$conn.on('message', function (event, data) {
     console.log(data);
 });

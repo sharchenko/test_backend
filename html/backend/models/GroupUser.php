@@ -89,6 +89,6 @@ class GroupUser extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new \app\models\queries\GroupUserQuery(get_called_class());
+        return new \backend\models\queries\GroupUserQuery(get_called_class());
     }
 }

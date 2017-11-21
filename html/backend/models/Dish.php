@@ -83,6 +83,6 @@ class Dish extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new \app\models\queries\DishQuery(get_called_class());
+        return new \backend\models\queries\DishQuery(get_called_class());
     }
 }

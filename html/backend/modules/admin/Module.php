@@ -11,12 +11,12 @@ use yii\web\ForbiddenHttpException;
  */
 class Module extends \yii\base\Module
 {
-    public $layoutPath = '@app/modules/admin/views/layouts';
+    public $layoutPath = '@backend/modules/admin/views/layouts';
     public $layout = 'main';
     /**
      * @inheritdoc
      */
-    public $controllerNamespace = 'app\modules\admin\controllers';
+    public $controllerNamespace = 'backend\modules\admin\controllers';
 
     /**
      * @inheritdoc

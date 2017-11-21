@@ -18,7 +18,7 @@ return [
     'controllerMap' => [
         'fixture' => [
             'class' => 'console\controllers\FixtureController',
-            'namespace' => 'app\tests\fixtures',
+            'namespace' => 'backend\tests\fixtures',
         ],
     ],
     'components' => [

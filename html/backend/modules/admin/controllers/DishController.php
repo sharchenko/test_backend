@@ -103,9 +103,12 @@ class DishController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        $model = $this->findModel($id);
+        $category_id = $model->category_id;
+        $model->delete();
+
+        return $this->redirect(['index', 'category' => $category_id]);
     }
 
     /**
