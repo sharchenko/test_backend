@@ -4,25 +4,21 @@
 namespace console\controllers;
 
 
-use app\models\Category;
-use common\models\User;
 use consik\yii2websocket\events\WSClientErrorEvent;
 use consik\yii2websocket\events\WSClientEvent;
 use consik\yii2websocket\events\WSClientMessageEvent;
 use console\daemons\WebSocketServer;
 use yii\console\Controller;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
+use yii\web\NotFoundHttpException;
 
 class ServerController extends Controller
 {
     public function actionIndex($port = 81)
     {
-        \Yii::setAlias('@app', dirname(dirname(__DIR__)) . '/app'); //TODO консольный контроллер переопределяет @app, на будущее исполльщовать другое пространство имен
-
         $server = new WebSocketServer();
         $server->port = $port;
-
-        $storage = new \SplObjectStorage();
 
         $server->on(WebSocketServer::EVENT_WEBSOCKET_OPEN, function () use ($server) {
             echo "Server started at port " . $server->port;
@@ -32,36 +28,21 @@ class ServerController extends Controller
         });
 
         $server->on(WebSocketServer::EVENT_CLIENT_ERROR, function (WSClientErrorEvent $event) {
-            echo $event->exception->getTraceAsString() . PHP_EOL;
             echo $event->exception->getMessage() . PHP_EOL;
+            echo '=================================' . PHP_EOL;
+            echo $event->exception->getTraceAsString() . PHP_EOL;
         });
 
-        $server->on(WebSocketServer::EVENT_CLIENT_MESSAGE, function (WSClientMessageEvent $event) use ($storage) {
+        $server->on(WebSocketServer::EVENT_CLIENT_MESSAGE, function (WSClientMessageEvent $event) use ($server) {
             $message = Json::decode($event->message);
+            $group_id = ArrayHelper::getValue($message, 'group_id');
 
-            if ($storage->contains($event->client)) {
-                /** @var User $user */
-                $user = $storage->offsetGet($event->client);
-            } else {
-                if (isset($message['auth'])) {
-                    if ($user = User::findOne(['auth_key' => $message['auth']])) {
-                        $event->client->send(Json::encode([
-                            'auth' => 'success',
-                            'menu' => Category::find()
-                                ->with('dishes')
-                                ->asArray()
-                                ->all()
-                        ]));
-                        $storage->attach($event->client, $user);
-                    } else {
-                        $event->client->send(Json::encode([
-                            'auth' => 'invalid key'
-                        ]));
-                        $event->client->close();
-                        return;
-                    }
-                }
+            if (!$group_id) {
+                throw new NotFoundHttpException('group_id not found');
             }
+
+            $group = $server->getGroup($group_id);
+            $user = $server->getUser([$event, $message, $group]);
             echo 'message by ' . $user->username . PHP_EOL;
 
             /**
