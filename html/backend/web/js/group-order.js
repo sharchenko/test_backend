@@ -237,6 +237,16 @@ exports.push([module.i, "\n.group-control {\n  margin-top: 10px;\n}\n.row.dish {
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'group-order',
@@ -256,10 +266,13 @@ exports.push([module.i, "\n.group-control {\n  margin-top: 10px;\n}\n.row.dish {
             return this.selfOrder.reduce((value, m) => value + m.count * m.price, 0);
         },
         orderSummary() {
-            return this.summaryOrder.reduce((value, m) => value + m.count * m.price, 0);
+            return this.summaryOrder.reduce((value, user) => value + this.sum(user.orderDishes), 0);
         }
     },
     methods: {
+        sum(model) {
+            return model.reduce((value, orderDish) => value + orderDish.count * orderDish.dish.price, 0);
+        },
         getCount(id) {
             let model = this.selfOrder.find(m => m.dish_id === id);
             return model ? model.count : 0;
@@ -403,7 +416,11 @@ var render = function() {
                                   }
                                 }
                               },
-                              [_vm._v("Добавить")]
+                              [
+                                _vm._v(
+                                  "\n                                Добавить\n                            "
+                                )
+                              ]
                             )
                       ])
                     ]
@@ -504,32 +521,48 @@ var render = function() {
         "div",
         { staticClass: "tab-pane", attrs: { id: "group-order" } },
         [
-          _vm.summaryOrder
-            ? _c("h4", [_vm._v("Всего: " + _vm._s(_vm.orderSummary) + " $")])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm._l(_vm.summaryOrder, function(model) {
-            return _c("div", { staticClass: "row dish" }, [
-              _c("div", { staticClass: "col-md-10" }, [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(model.name) +
-                    "\n                "
-                )
-              ]),
+          _vm._l(_vm.summaryOrder, function(user) {
+            return [
+              _c("h4", [_vm._v(_vm._s(user.username))]),
               _vm._v(" "),
-              _c("div", { staticClass: "col-md-2" }, [
-                _vm._v(
-                  _vm._s(model.count) +
-                    " x " +
-                    _vm._s(model.price) +
-                    " = " +
-                    _vm._s(model.count * model.price) +
-                    " $"
-                )
+              _vm._l(user.orderDishes, function(model) {
+                return _c("div", { staticClass: "row dish" }, [
+                  _c("div", { staticClass: "col-md-10" }, [
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(model.dish.name) +
+                        "\n                    "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-2" }, [
+                    _vm._v(
+                      _vm._s(model.count) +
+                        " x " +
+                        _vm._s(model.dish.price) +
+                        " = " +
+                        _vm._s(model.count * model.dish.price) +
+                        " $"
+                    )
+                  ])
+                ])
+              }),
+              _vm._v(" "),
+              _c("div", { staticClass: "row dish" }, [
+                _c("div", { staticClass: "col-md-12 text-right" }, [
+                  _c("strong", [
+                    _vm._v(_vm._s(_vm.sum(user.orderDishes)) + " $")
+                  ])
+                ])
               ])
-            ])
+            ]
           }),
+          _vm._v(" "),
+          _vm.summaryOrder
+            ? _c("h2", { staticClass: "text-right" }, [
+                _vm._v("Всего: " + _vm._s(_vm.orderSummary) + " $")
+              ])
+            : _vm._e(),
           _vm._v(" "),
           _vm.canSend && _vm.summaryOrder && _vm.summaryOrder.length
             ? _c("div", { staticClass: "row dish" }, [

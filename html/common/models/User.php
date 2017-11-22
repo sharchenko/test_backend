@@ -1,6 +1,7 @@
 <?php
 namespace common\models;
 
+use backend\models\OrderDishes;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -21,6 +22,8 @@ use yii\web\IdentityInterface;
  * @property integer $updated_at
  * @property string $role
  * @property string $password write-only password
+ *
+ * @property OrderDishes $orderDishes
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -193,5 +196,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public function getOrderDishes() {
+        return $this->hasMany(OrderDishes::className(), ['user_id' => 'id']);
     }
 }

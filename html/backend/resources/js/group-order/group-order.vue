@@ -32,7 +32,9 @@
                                     <button class="btn" @click="action('increment', dish.id)">+</button>
                                     <button class="btn btn-danger" @click="action('remove', dish.id)">Удалить</button>
                                 </div>
-                                <button class="btn btn-primary btn-sm" @click="action('append', dish.id)" v-else>Добавить</button>
+                                <button class="btn btn-primary btn-sm" @click="action('append', dish.id)" v-else>
+                                    Добавить
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -44,7 +46,7 @@
                     <div class="col-md-8">
                         {{model.name}}
                     </div>
-                    <div class="col-md-2">{{model.count}} x {{model.price}} = {{model.count*model.price}} $</div>
+                    <div class="col-md-2">{{model.count}} x {{model.price}} = {{model.count * model.price}} $</div>
                     <div class="col-md-2">
                         <div class="btn-group btn-group-sm group-control">
                             <button class="btn" @click="action('decrement', model.dish_id)">-</button>
@@ -56,13 +58,21 @@
                 </div>
             </div>
             <div class="tab-pane" id="group-order">
-                <h4 v-if="summaryOrder">Всего: {{orderSummary}} $</h4>
-                <div class="row dish" v-for="model in summaryOrder">
-                    <div class="col-md-10">
-                        {{model.name}}
+                <template v-for="user in summaryOrder">
+                    <h4>{{user.username}}</h4>
+                    <div class="row dish" v-for="model in user.orderDishes">
+                        <div class="col-md-10">
+                            {{model.dish.name}}
+                        </div>
+                        <div class="col-md-2">{{model.count}} x {{model.dish.price}} = {{model.count * model.dish.price}} $</div>
                     </div>
-                    <div class="col-md-2">{{model.count}} x {{model.price}} = {{model.count*model.price}} $</div>
-                </div>
+                    <div class="row dish">
+                        <div class="col-md-12 text-right">
+                            <strong>{{sum(user.orderDishes)}} $</strong>
+                        </div>
+                    </div>
+                </template>
+                <h2 class="text-right" v-if="summaryOrder">Всего: {{orderSummary}} $</h2>
                 <div class="row dish" v-if="canSend && summaryOrder && summaryOrder.length">
                     <div class="col-md-12 clearfix">
                         <a :href="'/order/send?group_id=' + $conn.groupId">
@@ -94,10 +104,13 @@
                 return this.selfOrder.reduce((value, m) => value + m.count * m.price, 0)
             },
             orderSummary() {
-                return this.summaryOrder.reduce((value, m) => value + m.count * m.price, 0)
+                return this.summaryOrder.reduce((value, user) => value + this.sum(user.orderDishes), 0)
             }
         },
         methods: {
+            sum(model) {
+                return model.reduce((value, orderDish) => value + orderDish.count * orderDish.dish.price, 0)
+            },
             getCount(id) {
                 let model = this.selfOrder.find(m => m.dish_id === id);
                 return model ? model.count : 0;

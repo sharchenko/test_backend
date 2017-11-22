@@ -12,6 +12,7 @@ use backend\models\Order;
 use backend\models\OrderDishes;
 use common\models\User;
 use Ratchet\ConnectionInterface;
+use yii\db\ActiveQuery;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
@@ -124,21 +125,18 @@ class WebSocketServer extends \consik\yii2websocket\WebSocketServer
                 ->leftJoin('dish', 'dish.id=order_dishes.dish_id')
                 ->asArray()
                 ->all(),
-            'summaryOrder' => (new Query())
-                ->select([
-                    'count',
-                    'dish_id',
-                    'name',
-                    'price'
+            'summaryOrder' => User::find()
+                ->where(['id' => OrderDishes::find()
+                    ->select(['user_id'])
+                    ->andWhere(['order_id' => $order->id])])
+                ->with([
+                    'orderDishes' => function (ActiveQuery $query) use ($order) {
+                        $query->with('dish')->andWhere(['order_id' => $order->id])->orderBy('id');
+                    }
                 ])
-                ->from([
-                    'order_dishes' => OrderDishes::find()
-                        ->select(['dish_id', 'sum(count) as count'])
-                        ->andWhere(['order_id' => $order->id])
-                        ->groupBy(['dish_id'])
-                ])
-                ->leftJoin('dish', 'dish.id=order_dishes.dish_id')
-                ->all(),
+                ->asArray()
+                ->all()
+            ,
             'canSend' => $isAdmin
         ];
     }
