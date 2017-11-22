@@ -9,13 +9,13 @@ use yii\base\BaseObject;
 class Room extends BaseObject
 {
     /** @var  \SplObjectStorage */
-    public $storage;
+    public $clients;
 
     /** @var  \backend\models\Group */
-    public $model;
+    public $group;
 
     public function init()
     {
-        $this->storage = new \SplObjectStorage();
+        $this->clients = new \SplObjectStorage();
     }
 }

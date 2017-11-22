@@ -42,21 +42,23 @@ class ServerController extends Controller
                 throw new NotFoundHttpException('group_id not found');
             }
 
-            $room = $server->getGroup($group_id);
+            $room = $server->getRoom($group_id);
             $user = $server->getUser([$event, $message, $room]);
+
             echo 'request from ' . $user->username . PHP_EOL;
 
-            if (!$server->helper->inGroup($room->model, $user)) {
-                $room->storage->detach($event->client);
-                throw new ForbiddenHttpException();
+            if (!$server->groupHelper->inGroup($room->group, $user)) {
+                return $server->disconnect($room, $event->client);
             }
 
             $action = ArrayHelper::getValue($message, 'action');
+            $actionName = "_$action";
 
-            if ($action && method_exists($server, $action)) {
-                $server->$action($event->client, $user, ArrayHelper::getValue($message, 'params'));
+            echo $action . PHP_EOL;
+
+            if ($action && method_exists($server, $actionName) && $server->$actionName($room, $user, ArrayHelper::getValue($message, 'params'))) {
                 $server->updateData($room);
-            } elseif ($action) {
+            } elseif ($actionName) {
                 $event->client->send(Json::encode([
                     'error' => 'invalid action'
                 ]));
