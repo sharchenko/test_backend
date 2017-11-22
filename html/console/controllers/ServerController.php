@@ -3,7 +3,6 @@
 
 namespace console\controllers;
 
-
 use consik\yii2websocket\events\WSClientErrorEvent;
 use consik\yii2websocket\events\WSClientEvent;
 use consik\yii2websocket\events\WSClientMessageEvent;
@@ -11,7 +10,6 @@ use console\daemons\WebSocketServer;
 use yii\console\Controller;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
-use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 class ServerController extends Controller
@@ -28,9 +26,13 @@ class ServerController extends Controller
         $server->on(WebSocketServer::EVENT_CLIENT_CONNECTED, function (WSClientEvent $event) {
         });
 
+        $server->on(WebSocketServer::EVENT_CLIENT_DISCONNECTED, function (WSClientEvent $event) use ($server) {
+           $server->executeFromAll($event);
+        });
+
         $server->on(WebSocketServer::EVENT_CLIENT_ERROR, function (WSClientErrorEvent $event) {
             echo $event->exception->getMessage() . PHP_EOL;
-            echo '=================================' . PHP_EOL;
+            echo '=============================' . PHP_EOL;
             echo $event->exception->getTraceAsString() . PHP_EOL;
         });
 
@@ -38,25 +40,20 @@ class ServerController extends Controller
             $message = Json::decode($event->message);
             $group_id = ArrayHelper::getValue($message, 'group_id');
 
-            if (!$group_id) {
-                throw new NotFoundHttpException('group_id not found');
-            }
+            if (!$group_id) throw new NotFoundHttpException('group_id not found');
 
             $room = $server->getRoom($group_id);
             $user = $server->getUser([$event, $message, $room]);
 
-            echo 'request from ' . $user->username . PHP_EOL;
-
-            if (!$server->groupHelper->inGroup($room->group, $user)) {
-                return $server->disconnect($room, $event->client);
-            }
+            if (!$server->groupHelper->inGroup($room->group, $user)) return $server->disconnect($room, $event->client);
 
             $action = ArrayHelper::getValue($message, 'action');
+
+            if (!$action) return;
+
             $actionName = "_$action";
 
-            echo $action . PHP_EOL;
-
-            if ($action && method_exists($server, $actionName) && $server->$actionName($room, $user, ArrayHelper::getValue($message, 'params'))) {
+            if (method_exists($server, $actionName) && $server->$actionName($room, $user, ArrayHelper::getValue($message, 'params'))) {
                 $server->updateData($room);
             } elseif ($actionName) {
                 $event->client->send(Json::encode([

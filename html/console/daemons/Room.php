@@ -6,6 +6,10 @@ namespace console\daemons;
 
 use yii\base\BaseObject;
 
+/**
+ * Class Room
+ * @package console\daemons
+ */
 class Room extends BaseObject
 {
     /** @var  \SplObjectStorage */

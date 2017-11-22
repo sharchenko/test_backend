@@ -1,13 +1,11 @@
 <template>
     <div class='group-order'>
-        <!-- Nav tabs -->
         <ul class="nav nav-tabs">
             <li class="active"><a href="#group-menu" data-toggle="tab">Меню</a></li>
             <li><a href="#my-order" data-toggle="tab">Мой заказ</a></li>
             <li><a href="#group-order" data-toggle="tab">Общий заказ</a></li>
         </ul>
 
-        <!-- Tab panes -->
         <div class="tab-content">
             <div class="tab-pane active" id="group-menu">
                 <div class="panel" v-for="category in menu" :key="'category_' + category.id">
@@ -48,7 +46,7 @@
                     </div>
                     <div class="col-md-2">{{model.count}} x {{model.price}} = {{model.count * model.price}} $</div>
                     <div class="col-md-2">
-                        <div class="btn-group btn-group-sm group-control">
+                        <div class="btn-group btn-group-xs">
                             <button class="btn" @click="action('decrement', model.dish_id)">-</button>
                             <button class="btn btn-info">{{model.count}}</button>
                             <button class="btn" @click="action('increment', model.dish_id)">+</button>
@@ -140,7 +138,7 @@
 
 <style lang="scss">
     .group-control {
-        margin-top: 10px;
+        margin-top: 5px;
     }
 
     .row.dish {

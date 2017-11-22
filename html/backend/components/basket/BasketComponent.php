@@ -45,6 +45,10 @@ class BasketComponent extends Component
         return $this->_order;
     }
 
+    /**
+     * @param Group $group
+     * @return Order|null
+     */
     public function getGroupOrder(Group $group)
     {
         $order = Order::find()->currentGroupDraft($group->id);

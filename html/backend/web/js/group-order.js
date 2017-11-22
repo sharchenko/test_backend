@@ -43,9 +43,6 @@ __webpack_require__(15);
 _vue2.default.prototype.$http = window.axios;
 _vue2.default.prototype.$conn = new _connection.Connection();
 window.conn = _vue2.default.prototype.$conn;
-_vue2.default.prototype.$conn.on('message', function (event, data) {
-    console.log(data);
-});
 
 new _vue2.default({
     el: '#group-order-root',
@@ -149,7 +146,7 @@ exports = module.exports = __webpack_require__(73)(undefined);
 
 
 // module
-exports.push([module.i, "\n.group-control {\n  margin-top: 10px;\n}\n.row.dish {\n  border-bottom: 1px dotted gray;\n  padding-bottom: 5px;\n  padding-top: 5px;\n}\n.row.dish:last-child {\n    border-bottom: none;\n}\n", ""]);
+exports.push([module.i, "\n.group-control {\n  margin-top: 5px;\n}\n.row.dish {\n  border-bottom: 1px dotted gray;\n  padding-bottom: 5px;\n  padding-top: 5px;\n}\n.row.dish:last-child {\n    border-bottom: none;\n}\n", ""]);
 
 // exports
 
@@ -160,8 +157,6 @@ exports.push([module.i, "\n.group-control {\n  margin-top: 10px;\n}\n.row.dish {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-//
-//
 //
 //
 //
@@ -462,54 +457,50 @@ var render = function() {
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-2" }, [
-                _c(
-                  "div",
-                  { staticClass: "btn-group btn-group-sm group-control" },
-                  [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn",
-                        on: {
-                          click: function($event) {
-                            _vm.action("decrement", model.dish_id)
-                          }
+                _c("div", { staticClass: "btn-group btn-group-xs" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn",
+                      on: {
+                        click: function($event) {
+                          _vm.action("decrement", model.dish_id)
                         }
-                      },
-                      [_vm._v("-")]
-                    ),
-                    _vm._v(" "),
-                    _c("button", { staticClass: "btn btn-info" }, [
-                      _vm._v(_vm._s(model.count))
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn",
-                        on: {
-                          click: function($event) {
-                            _vm.action("increment", model.dish_id)
-                          }
+                      }
+                    },
+                    [_vm._v("-")]
+                  ),
+                  _vm._v(" "),
+                  _c("button", { staticClass: "btn btn-info" }, [
+                    _vm._v(_vm._s(model.count))
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn",
+                      on: {
+                        click: function($event) {
+                          _vm.action("increment", model.dish_id)
                         }
-                      },
-                      [_vm._v("+")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-danger",
-                        on: {
-                          click: function($event) {
-                            _vm.action("remove", model.dish_id)
-                          }
+                      }
+                    },
+                    [_vm._v("+")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-danger",
+                      on: {
+                        click: function($event) {
+                          _vm.action("remove", model.dish_id)
                         }
-                      },
-                      [_vm._v("Удалить")]
-                    )
-                  ]
-                )
+                      }
+                    },
+                    [_vm._v("Удалить")]
+                  )
+                ])
               ])
             ])
           })

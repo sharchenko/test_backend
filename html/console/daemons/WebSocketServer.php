@@ -11,15 +11,18 @@ use backend\models\Group;
 use backend\models\Order;
 use backend\models\OrderDishes;
 use common\models\User;
+use consik\yii2websocket\events\WSClientEvent;
 use Ratchet\ConnectionInterface;
 use yii\db\ActiveQuery;
-use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
-
+/**
+ * Class WebSocketServer
+ * @package console\daemons
+ */
 class WebSocketServer extends \consik\yii2websocket\WebSocketServer
 {
     /** @var  Room[] */
@@ -27,6 +30,7 @@ class WebSocketServer extends \consik\yii2websocket\WebSocketServer
 
     /** @var  GroupComponent */
     public $groupHelper;
+
     /** @var  BasketComponent */
     public $basketHelper;
 
@@ -59,6 +63,11 @@ class WebSocketServer extends \consik\yii2websocket\WebSocketServer
         }
     }
 
+    /**
+     * @param Room $room
+     * @param ConnectionInterface $conn
+     * @param null|string $message
+     */
     public function disconnect(Room $room, ConnectionInterface $conn, $message = null)
     {
         $conn->send(Json::encode(['error' => $message ?: 'forbidden exception']));
@@ -101,18 +110,19 @@ class WebSocketServer extends \consik\yii2websocket\WebSocketServer
         }
     }
 
-    public function getMenu()
-    {
-        return Category::find()
-            ->with('dishes')
-            ->asArray()
-            ->all();
-    }
-
+    /**
+     * @param Order $order
+     * @param User $user
+     * @param $isAdmin
+     * @return array
+     */
     public function data(Order $order, User $user, $isAdmin)
     {
         return [
-            'menu' => $this->getMenu(),
+            'menu' => Category::find()
+                ->with('dishes')
+                ->asArray()
+                ->all(),
             'selfOrder' => OrderDishes::find()
                 ->select([
                     'count',
@@ -129,18 +139,18 @@ class WebSocketServer extends \consik\yii2websocket\WebSocketServer
                 ->where(['id' => OrderDishes::find()
                     ->select(['user_id'])
                     ->andWhere(['order_id' => $order->id])])
-                ->with([
-                    'orderDishes' => function (ActiveQuery $query) use ($order) {
+                ->with(['orderDishes' => function (ActiveQuery $query) use ($order) {
                         $query->with('dish')->andWhere(['order_id' => $order->id])->orderBy('id');
-                    }
-                ])
+                    }])
                 ->asArray()
-                ->all()
-            ,
+                ->all(),
             'canSend' => $isAdmin
         ];
     }
 
+    /**
+     * @param Room $room
+     */
     public function updateData(Room $room)
     {
         $order = $this->basketHelper->getGroupOrder($room->group);
@@ -159,6 +169,12 @@ class WebSocketServer extends \consik\yii2websocket\WebSocketServer
         }
     }
 
+    /**
+     * @param Room $room
+     * @param User $user
+     * @param array $params
+     * @return bool
+     */
     public function _append(Room $room, User $user, $params = [])
     {
         if ($dish = Dish::findOne(ArrayHelper::getValue($params, 'dish_id'))) {
@@ -167,6 +183,12 @@ class WebSocketServer extends \consik\yii2websocket\WebSocketServer
         }
     }
 
+    /**
+     * @param Room $room
+     * @param User $user
+     * @param array $params
+     * @return bool
+     */
     public function _remove(Room $room, User $user, $params = [])
     {
         if ($dish = Dish::findOne(ArrayHelper::getValue($params, 'dish_id'))) {
@@ -175,6 +197,12 @@ class WebSocketServer extends \consik\yii2websocket\WebSocketServer
         }
     }
 
+    /**
+     * @param Room $room
+     * @param User $user
+     * @param array $params
+     * @return bool
+     */
     public function _increment(Room $room, User $user, $params = [])
     {
         $order = $this->basketHelper->getGroupOrder($room->group);
@@ -192,6 +220,12 @@ class WebSocketServer extends \consik\yii2websocket\WebSocketServer
         return false;
     }
 
+    /**
+     * @param Room $room
+     * @param User $user
+     * @param array $params
+     * @return bool
+     */
     public function _decrement(Room $room, User $user, $params = [])
     {
         $order = $this->basketHelper->getGroupOrder($room->group);
@@ -207,5 +241,17 @@ class WebSocketServer extends \consik\yii2websocket\WebSocketServer
             if ($orderDish->count > 0 && $orderDish->save()) return true;
         }
         return false;
+    }
+
+    /**
+     * @param WSClientEvent $event
+     */
+    public function executeFromAll(WSClientEvent $event) {
+        foreach ($this->rooms as $room) {
+            if ($room->clients->contains($event->client)) {
+                $room->clients->detach($event->client);
+                continue;
+            }
+        }
     }
 }

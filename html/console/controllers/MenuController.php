@@ -24,8 +24,10 @@ class MenuController extends Controller
         $fullPath = \Yii::getAlias("@backend/web/files/$name");
 
         if (file_put_contents($fullPath, $this->formatPdf($content))) {
-            echo '=============================================' . PHP_EOL;
+            echo '====================' . PHP_EOL;
             echo "Доступно в $fullPath" . PHP_EOL;
+            echo '====================' . PHP_EOL;
+
         }
     }
 
