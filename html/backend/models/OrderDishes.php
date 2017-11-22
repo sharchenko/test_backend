@@ -83,7 +83,7 @@ class OrderDishes extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return \app\models\queries\OrderDishesQuery the active query used by this AR class.
+     * @return \backend\models\queries\OrderDishesQuery the active query used by this AR class.
      */
     public static function find()
     {

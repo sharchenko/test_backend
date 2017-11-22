@@ -7,7 +7,7 @@ webpackJsonpapp([1],{
 "use strict";
 
 
-window.axios = __webpack_require__(26);
+window.axios = __webpack_require__(25);
 
 var token = document.head.querySelector('meta[name="csrf-token"]');
 
@@ -19,21 +19,21 @@ if (token) {
 
 /***/ }),
 
-/***/ 79:
+/***/ 66:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _vue = __webpack_require__(80);
+var _vue = __webpack_require__(67);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _groupOrder = __webpack_require__(83);
+var _groupOrder = __webpack_require__(70);
 
 var _groupOrder2 = _interopRequireDefault(_groupOrder);
 
-var _connection = __webpack_require__(92);
+var _connection = __webpack_require__(79);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -57,19 +57,19 @@ new _vue2.default({
 
 /***/ }),
 
-/***/ 83:
+/***/ 70:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_bustCache_group_order_vue__ = __webpack_require__(90);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_58ff9dc2_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_bustCache_group_order_vue__ = __webpack_require__(91);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_bustCache_group_order_vue__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_58ff9dc2_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_bustCache_group_order_vue__ = __webpack_require__(78);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(84)
+  __webpack_require__(71)
 }
-var normalizeComponent = __webpack_require__(89)
+var normalizeComponent = __webpack_require__(76)
 /* script */
 
 /* template */
@@ -114,17 +114,17 @@ if (false) {(function () {
 
 /***/ }),
 
-/***/ 84:
+/***/ 71:
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(85);
+var content = __webpack_require__(72);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(87)("bb7dfcce", content, false);
+var update = __webpack_require__(74)("bb7dfcce", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -141,25 +141,58 @@ if(false) {
 
 /***/ }),
 
-/***/ 85:
+/***/ 72:
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(86)(undefined);
+exports = module.exports = __webpack_require__(73)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, "\n.group-control {\n  margin-top: 10px;\n}\n.row.dish {\n  border-bottom: 1px dotted gray;\n  padding-bottom: 5px;\n}\n.row.dish:last-child {\n    border-bottom: none;\n}\n", ""]);
+exports.push([module.i, "\n.group-control {\n  margin-top: 10px;\n}\n.row.dish {\n  border-bottom: 1px dotted gray;\n  padding-bottom: 5px;\n  padding-top: 5px;\n}\n.row.dish:last-child {\n    border-bottom: none;\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
 
-/***/ 90:
+/***/ 77:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -209,13 +242,44 @@ exports.push([module.i, "\n.group-control {\n  margin-top: 10px;\n}\n.row.dish {
     name: 'group-order',
     data: function () {
         return {
-            menu: null
+            menu: null,
+            selfOrder: null,
+            summaryOrder: null,
+            canSend: null
         };
+    },
+    computed: {
+        dishes() {
+            return this.selfOrder.map(m => m.dish_id);
+        },
+        selfSummary() {
+            return this.selfOrder.reduce((value, m) => value + m.count * m.price, 0);
+        },
+        orderSummary() {
+            return this.summaryOrder.reduce((value, m) => value + m.count * m.price, 0);
+        }
+    },
+    methods: {
+        getCount(id) {
+            let model = this.selfOrder.find(m => m.dish_id === id);
+            return model ? model.count : 0;
+        },
+        action(action, dish_id) {
+            this.$conn.push({
+                action,
+                params: {
+                    dish_id
+                }
+            });
+        }
     },
     created() {
         this.$conn.on('message', (event, data) => {
-            if (data && data.menu) {
-                this.menu = data.menu;
+            if (data) {
+                this.menu = data.menu || this.menu;
+                this.selfOrder = data.selfOrder || this.selfOrder;
+                this.summaryOrder = data.summaryOrder || this.summaryOrder;
+                this.canSend = data.canSend || this.canSend;
             }
         });
         this.$conn.connect();
@@ -224,7 +288,7 @@ exports.push([module.i, "\n.group-control {\n  margin-top: 10px;\n}\n.row.dish {
 
 /***/ }),
 
-/***/ 91:
+/***/ 78:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -258,7 +322,7 @@ var render = function() {
                     "div",
                     { key: "dish_" + dish.id, staticClass: "row dish" },
                     [
-                      _c("div", { staticClass: "col-md-8" }, [
+                      _c("div", { staticClass: "col-md-6" }, [
                         _c("h4", [_vm._v(_vm._s(dish.name))]),
                         _vm._v(" "),
                         _c("div", [
@@ -276,7 +340,72 @@ var render = function() {
                         _c("em", [_vm._v(_vm._s(dish.price) + " $")])
                       ]),
                       _vm._v(" "),
-                      _vm._m(1, true, false)
+                      _c("div", { staticClass: "col-md-2" }, [
+                        _vm.dishes.indexOf(dish.id) !== -1
+                          ? _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "btn-group btn-group-sm group-control"
+                              },
+                              [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn",
+                                    on: {
+                                      click: function($event) {
+                                        _vm.action("decrement", dish.id)
+                                      }
+                                    }
+                                  },
+                                  [_vm._v("-")]
+                                ),
+                                _vm._v(" "),
+                                _c("button", { staticClass: "btn btn-info" }, [
+                                  _vm._v(_vm._s(_vm.getCount(dish.id)))
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn",
+                                    on: {
+                                      click: function($event) {
+                                        _vm.action("increment", dish.id)
+                                      }
+                                    }
+                                  },
+                                  [_vm._v("+")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-danger",
+                                    on: {
+                                      click: function($event) {
+                                        _vm.action("remove", dish.id)
+                                      }
+                                    }
+                                  },
+                                  [_vm._v("Удалить")]
+                                )
+                              ]
+                            )
+                          : _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-primary btn-sm",
+                                on: {
+                                  click: function($event) {
+                                    _vm.action("append", dish.id)
+                                  }
+                                }
+                              },
+                              [_vm._v("Добавить")]
+                            )
+                      ])
                     ]
                   )
                 })
@@ -286,13 +415,146 @@ var render = function() {
         })
       ),
       _vm._v(" "),
-      _c("div", { staticClass: "tab-pane", attrs: { id: "my-order" } }, [
-        _vm._v("coming soon...")
-      ]),
+      _c(
+        "div",
+        { staticClass: "tab-pane", attrs: { id: "my-order" } },
+        [
+          _vm.selfOrder
+            ? _c("h4", [_vm._v("Всего: " + _vm._s(_vm.selfSummary) + " $")])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm._l(_vm.selfOrder, function(model) {
+            return _c("div", { staticClass: "row dish" }, [
+              _c("div", { staticClass: "col-md-8" }, [
+                _vm._v(
+                  "\n                    " +
+                    _vm._s(model.name) +
+                    "\n                "
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-2" }, [
+                _vm._v(
+                  _vm._s(model.count) +
+                    " x " +
+                    _vm._s(model.price) +
+                    " = " +
+                    _vm._s(model.count * model.price) +
+                    " $"
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-2" }, [
+                _c(
+                  "div",
+                  { staticClass: "btn-group btn-group-sm group-control" },
+                  [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn",
+                        on: {
+                          click: function($event) {
+                            _vm.action("decrement", model.dish_id)
+                          }
+                        }
+                      },
+                      [_vm._v("-")]
+                    ),
+                    _vm._v(" "),
+                    _c("button", { staticClass: "btn btn-info" }, [
+                      _vm._v(_vm._s(model.count))
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn",
+                        on: {
+                          click: function($event) {
+                            _vm.action("increment", model.dish_id)
+                          }
+                        }
+                      },
+                      [_vm._v("+")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-danger",
+                        on: {
+                          click: function($event) {
+                            _vm.action("remove", model.dish_id)
+                          }
+                        }
+                      },
+                      [_vm._v("Удалить")]
+                    )
+                  ]
+                )
+              ])
+            ])
+          })
+        ],
+        2
+      ),
       _vm._v(" "),
-      _c("div", { staticClass: "tab-pane", attrs: { id: "group-order" } }, [
-        _vm._v("coming soon...")
-      ])
+      _c(
+        "div",
+        { staticClass: "tab-pane", attrs: { id: "group-order" } },
+        [
+          _vm.summaryOrder
+            ? _c("h4", [_vm._v("Всего: " + _vm._s(_vm.orderSummary) + " $")])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm._l(_vm.summaryOrder, function(model) {
+            return _c("div", { staticClass: "row dish" }, [
+              _c("div", { staticClass: "col-md-10" }, [
+                _vm._v(
+                  "\n                    " +
+                    _vm._s(model.name) +
+                    "\n                "
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-2" }, [
+                _vm._v(
+                  _vm._s(model.count) +
+                    " x " +
+                    _vm._s(model.price) +
+                    " = " +
+                    _vm._s(model.count * model.price) +
+                    " $"
+                )
+              ])
+            ])
+          }),
+          _vm._v(" "),
+          _vm.canSend && _vm.summaryOrder && _vm.summaryOrder.length
+            ? _c("div", { staticClass: "row dish" }, [
+                _c("div", { staticClass: "col-md-12 clearfix" }, [
+                  _c(
+                    "a",
+                    {
+                      attrs: {
+                        href: "/order/send?group_id=" + _vm.$conn.groupId
+                      }
+                    },
+                    [
+                      _c(
+                        "button",
+                        { staticClass: "btn btn-success pull-right" },
+                        [_vm._v("Отправить заказ")]
+                      )
+                    ]
+                  )
+                ])
+              ])
+            : _vm._e()
+        ],
+        2
+      )
     ])
   ])
 }
@@ -320,20 +582,6 @@ var staticRenderFns = [
         ])
       ])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-2" }, [
-      _c("div", { staticClass: "btn-group btn-group-sm group-control" }, [
-        _c("button", { staticClass: "btn" }, [_vm._v("-")]),
-        _vm._v(" "),
-        _c("button", { staticClass: "btn btn-info" }, [_vm._v("0")]),
-        _vm._v(" "),
-        _c("button", { staticClass: "btn" }, [_vm._v("+")])
-      ])
-    ])
   }
 ]
 render._withStripped = true
@@ -348,7 +596,7 @@ if (false) {
 
 /***/ }),
 
-/***/ 92:
+/***/ 79:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -359,23 +607,23 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Connection = undefined;
 
-var _stringify = __webpack_require__(93);
+var _stringify = __webpack_require__(80);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
-var _regenerator = __webpack_require__(95);
+var _regenerator = __webpack_require__(82);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(98);
+var _asyncToGenerator2 = __webpack_require__(85);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-var _classCallCheck2 = __webpack_require__(134);
+var _classCallCheck2 = __webpack_require__(121);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(135);
+var _createClass2 = __webpack_require__(122);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
@@ -504,4 +752,4 @@ var Connection = exports.Connection = function () {
 
 /***/ })
 
-},[79]);
+},[66]);

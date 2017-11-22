@@ -1,10 +1,11 @@
 <?php
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Order */
+/* @var $model backend\models\Order */
 
 $this->title = "Заказ #$model->id";
 $this->params['breadcrumbs'][] = ['label' => 'Заказы', 'url' => ['index']];
@@ -17,11 +18,15 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="panel">
         <div class="panel-body">
             <p>
-                Отправитель: <strong><?= Html::encode($model->sender->username) ?></strong>
+                Отправитель:
+                <strong><?= Html::encode(ArrayHelper::getValue($model, 'sender.username') ?: ArrayHelper::getValue($model, 'group.name')) ?></strong>
             </p>
-            <p>
-                Email: <a href="mailto:<?= Html::encode($model->sender->email) ?>"><?= Html::encode($model->sender->email) ?></a>
-            </p>
+            <?php if ($model->sender): ?>
+                <p>
+                    Email: <a
+                            href="mailto:<?= Html::encode($model->sender->email) ?>"><?= Html::encode($model->sender->email) ?></a>
+                </p>
+            <?php endif; ?>
             <hr>
             <h4>Содержание</h4>
             <table class="table table-responsive table-condensed">
@@ -35,7 +40,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     </tr>
                 <?php endforeach; ?>
                 <tr>
-                    <td colspan="2" class="text-right"><strong>Всего:</strong> <?= Yii::$app->formatter->asCurrency($total)?></td>
+                    <td colspan="2" class="text-right">
+                        <strong>Всего:</strong> <?= Yii::$app->formatter->asCurrency($total) ?></td>
                 </tr>
             </table>
         </div>

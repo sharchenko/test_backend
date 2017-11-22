@@ -18,6 +18,7 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $group_id
  *
  * @property User $sender
+ * @property Group $group
  * @property OrderDishes[] $orderDishes
  */
 class Order extends \yii\db\ActiveRecord
@@ -89,6 +90,14 @@ class Order extends \yii\db\ActiveRecord
     public function getSender()
     {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGroup()
+    {
+        return $this->hasOne(Group::className(), ['id' => 'group_id']);
     }
 
     /**

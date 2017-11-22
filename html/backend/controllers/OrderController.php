@@ -6,10 +6,13 @@ namespace backend\controllers;
 
 use backend\components\basket\BasketComponent;
 use backend\models\Dish;
+use backend\models\Group;
 use backend\models\Order;
 use backend\models\OrderDishes;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
@@ -100,9 +103,14 @@ class OrderController extends Controller
         throw new ServerErrorHttpException();
     }
 
-    public function actionSend()
+    public function actionSend($group_id = null)
     {
-        $order = Order::find()->currentDraft(\Yii::$app->user->id);
+        if ($group_id && ($group = Group::findOne($group_id))) {
+            if (!Yii::$app->group->isAdmin($group, \Yii::$app->user->identity)) throw new ForbiddenHttpException();
+            $order = Order::find()->currentGroupDraft($group_id);
+        } else {
+            $order = Order::find()->currentDraft(\Yii::$app->user->id);
+        }
         if ($order) {
             if ($order->orderDishes && $order->send()) {
                 \Yii::$app->session->setFlash('success', 'Ваш заказ принят, ожидайте.');

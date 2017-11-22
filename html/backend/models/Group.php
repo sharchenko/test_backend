@@ -3,15 +3,8 @@
 namespace backend\models;
 
 use common\models\User;
-use Yii;
 use yii\base\Event;
 use yii\behaviors\BlameableBehavior;
-
-Event::on(Group::className(), Group::EVENT_AFTER_INSERT, function(Event $event) {
-    /** @var Group $group */
-    $group = $event->sender;
-    GroupUser::create($group, null, GroupUser::STATUS_APPROVED);
-});
 
 /**
  * This is the model class for table "group".

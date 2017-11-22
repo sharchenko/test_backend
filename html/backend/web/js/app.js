@@ -7,7 +7,7 @@ webpackJsonpapp([2],{
 "use strict";
 
 
-window.axios = __webpack_require__(26);
+window.axios = __webpack_require__(25);
 
 var token = document.head.querySelector('meta[name="csrf-token"]');
 
@@ -19,18 +19,18 @@ if (token) {
 
 /***/ }),
 
-/***/ 47:
+/***/ 46:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 __webpack_require__(15);
-__webpack_require__(78);
+__webpack_require__(65);
 
 /***/ }),
 
-/***/ 78:
+/***/ 65:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -116,4 +116,4 @@ $('*[data-action="changeCount"]').click(function () {
 
 /***/ })
 
-},[47]);
+},[46]);
